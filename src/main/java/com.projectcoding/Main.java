@@ -70,6 +70,8 @@ public class Main {
             } else if (prompt == 4) {
                 checkAccount();
             } else if (prompt == 5) {
+                changePin(pin);
+            } else if (prompt == 6) {
                 break;
             }
 
@@ -95,18 +97,53 @@ public class Main {
     private static void cashWithdrawal() {
         System.out.println("-- CASH WITHDRAWAL --");
 
-        user.withdrawal(getDouble("Amount: "));
+        try {
+            user.withdrawal(getDouble("Amount: "));
+        } catch (IllegalArgumentException error) {
+            System.out.println(error.getMessage());
+        }
     }
 
     private static void cashDeposit() {
         System.out.println("-- CASH DEPOSIT --");
 
-        user.deposit(getDouble("Amount: "));
+        try {
+            user.deposit(getDouble("Amount: "));
+        } catch (IllegalArgumentException error) {
+            System.out.println(error.getMessage());
+        }
     }
 
     private static void checkAccount() {
         System.out.println("-- YOUR PERSONAL BANK ACCOUNT INFO --");
         System.out.println(user);
+    }
+
+    private static void changePin(String pin) {
+        System.out.println(" -- CHANGING YOUR PIN --");
+        if (!user.isPinChangeable()) {
+            System.out.println("Sorry, your PIN cannot be changed");
+            return;
+        }
+
+        System.out.print("Enter your current PIN: ");
+        String currentPin = input.nextLine();
+
+        if (!pin.equals(currentPin)) {
+            System.out.println("PIN did not match, try again!");
+            return;
+        }
+
+        System.out.print("Enter your new PIN: ");
+        String newPin = input.nextLine();
+
+        System.out.println("PIN successfully changed. Your account is now secure with the new PIN.");
+
+        try {
+            user.setPin(newPin);
+        } catch (IllegalAccessException error) {
+            System.out.println("Error changing pin: " + error.getMessage());
+        }
     }
 
     private static void menuOne() {
@@ -119,7 +156,7 @@ public class Main {
         clearScreen();
         System.out.println("-- Please select your transaction --");
         System.out.println(
-                "[1] - Balance Inquiry | [2] - Cash withdrawal | [3] - Cash deposit | [4] - Check account info | [5] - Remove your card");
+                "[1] - Balance Inquiry | [2] - Cash withdrawal | [3] - Cash deposit | [4] - Check account info | [5] - Change your PIN | [6] - Remove your card");
     }
 
     private static void clearScreen() {

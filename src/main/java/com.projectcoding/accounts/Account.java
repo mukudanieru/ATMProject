@@ -41,26 +41,32 @@ public class Account {
         return pin;
     }
 
-    public void setPin(String pin) {
-        if (isPinChangeable) {
-            this.pin = pin;
+    public void setPin(String pin) throws IllegalAccessException {
+        if (!isPinChangeable) {
+            throw new IllegalAccessException("Sorry but this PIN cannot be changed.");
         }
+
+        this.pin = pin;
     }
 
     public boolean isPinChangeable() {
         return isPinChangeable;
     }
 
-    public void withdrawal(double amount) {
+    public void withdrawal(double amount) throws IllegalArgumentException {
         if (this.balance - amount == 0) {
-            System.out.println("Invalid withdrawal: Insufficient funds.");
-            return;
+            throw new IllegalArgumentException("Invalid withdrawal: Insufficient funds.");
         }
+
         this.balance -= amount;
         System.out.printf("Successful withdrawal! Remaining balance: ₱%.2f%n", this.balance);
     }
 
     public void deposit(double amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Invalid deposit: Amount must be greater than zero.");
+        }
+
         this.balance += amount;
         System.out.printf("Successful deposit! New balance: ₱%.2f%n", this.balance);
     }
